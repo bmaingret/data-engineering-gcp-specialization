@@ -1,13 +1,30 @@
 # Modernizing Data Lakes and Data Warehouses with GCP
 
-## Introduction to Data Engineering
+- [1. Introduction to Data Engineering](#1-introduction-to-data-engineering)
+  - [1.1. Challenges](#11-challenges)
+  - [1.2. BigQuery as a data warehouse](#12-bigquery-as-a-data-warehouse)
+  - [1.3. Data lakes and data warehouses](#13-data-lakes-and-data-warehouses)
+  - [1.4. Transactional databases vs Data warehouse](#14-transactional-databases-vs-data-warehouse)
+  - [1.5. Serve other teams](#15-serve-other-teams)
+  - [1.6. Data access and governance](#16-data-access-and-governance)
+  - [1.7. Production-ready pipelines](#17-production-ready-pipelines)
+  - [1.8. Summary](#18-summary)
+- [2. Building a data lake](#2-building-a-data-lake)
+  - [2.1. Storage and ETL on GCP](#21-storage-and-etl-on-gcp)
+    - [2.1.1. How to chose? Some considerations](#211-how-to-chose-some-considerations)
+    - [2.1.2. Cloud Storage](#212-cloud-storage)
+      - [2.1.2.1. Overview](#2121-overview)
+      - [2.1.2.2. Security](#2122-security)
+    - [2.1.3. Transactional and Data analytics workloads](#213-transactional-and-data-analytics-workloads)
+
+## 1. Introduction to Data Engineering
 
 Build data pipelines. Why?
 
 ![](/assets/02-Modernizing_Data_Lakes_and_Data_Warehouses_with_GCP_pipeline.png)
 
 
-### Challenges
+### 1.1. Challenges
 
 ![](/assets/02-Modernizing_Data_Lakes_and_Data_Warehouses_with_GCP_challenges.png)
 
@@ -36,7 +53,7 @@ Build data pipelines. Why?
 * manage software and hardware
 * different engines
 
-### BigQuery as a data warehouse
+### 1.2. BigQuery as a data warehouse
 
 * organized data
 * queries on external data sources
@@ -46,7 +63,7 @@ Build data pipelines. Why?
 
 Focus on getting insights from data and not managing infrastructure
 
-### Data lakes and data warehouses
+### 1.3. Data lakes and data warehouses
 
 Data warehouse: store for that data is cleaned and transformed (vs data lake which is raw data)
 
@@ -54,18 +71,18 @@ Data warehouse: store for that data is cleaned and transformed (vs data lake whi
 
 BigQuery can be used as data wh but also as only a query engine to Cloud SQL, Cloud Storage, Google Drive
 
-### Transactional databases vs Data warehouse
+### 1.4. Transactional databases vs Data warehouse
 
 RDBMS optimized for write to records vs WH optimized for columns read
 
-### Serve other teams
+### 1.5. Serve other teams
 
 * ML: features for ml training but also live and in production
 * BI: improve query perf -> BI Engine (in-memory BI, column oriented)
 * other data engineering teams: performance and availability requirements and monitoring -> stackdriver
   
 
-### Data access and governance
+### 1.6. Data access and governance
 
 * who should have access?
 * PII
@@ -74,11 +91,11 @@ Data Catalog:
 * managed data discovery (queriable metadata)
 * data loss prevention api (classification and redaction)
 
-### Production-ready pipelines
+### 1.7. Production-ready pipelines
 
 Cloud Composer -> managed Apache Airflow
 
-### Summary
+### 1.8. Summary
 
 ![](/assets/02-Modernizing_Data_Lakes_and_Data_Warehouses_with_GCP_lake_wh.png)
 
@@ -86,7 +103,7 @@ Cloud Composer -> managed Apache Airflow
 ![](/assets/02-Modernizing_Data_Lakes_and_Data_Warehouses_with_GCP_4_words.png)
 
 
-## Building a data lake
+## 2. Building a data lake
 
 Consolidating data from various environments into on your environment.
 
@@ -96,7 +113,7 @@ Data WH on the other hand:
 * only load data into it when its use has been defined
 * consistent format and schema
 
-### Storage and ETL on GCP
+### 2.1. Storage and ETL on GCP
 
 GCP possibilities:
 
@@ -105,7 +122,7 @@ GCP possibilities:
 * Firebase
 * BigTable
   
-#### How to chose? Some considerations 
+#### 2.1.1. How to chose? Some considerations 
 * source of data
 * destination of data
 * amount of transformation
@@ -117,9 +134,9 @@ Amount of transformation?
 * Extract, Load & Transform : Similar but you need to do moderate cleaning transformation
 * Extract, Transform & Load : You expect transformation to greatly reduce your data size, or data is binary/proprietary format
 
-#### Cloud Storage
+#### 2.1.2. Cloud Storage
 
-##### Overview
+##### 2.1.2.1. Overview
 
 * Persistent storage
 * Object store but allows for some file system like control
@@ -146,7 +163,7 @@ Object management
 * Versioning
 * Lifecycle management (e.g. move after X days to coldline)
   
-##### Security
+##### 2.1.2.2. Security
 
 Security through Cloud IAM and Access Lists
 
@@ -171,7 +188,7 @@ Data audit
 * Retention policy
 
 
-#### Transactional and Data analytics workloads
+#### 2.1.3. Transactional and Data analytics workloads
 
 ![](/assets/02-Modernizing_Data_Lakes_and_Data_Warehouses_with_GCP_data_types.png)
 
