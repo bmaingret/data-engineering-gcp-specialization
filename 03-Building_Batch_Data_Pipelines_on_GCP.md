@@ -1,6 +1,10 @@
 # Building Batch Data Pipelines on GCP
 
-- [1. EL, ELT, ETL](#1-el-elt-etl)
+- [1. Transforming data](#1-transforming-data)
+  - [1.1. Comparisons EL, ELT, ETL](#11-comparisons-el-elt-etl)
+  - [1.2. Data quality processing](#12-data-quality-processing)
+  - [1.3. Beyond Dataflow and BigQuery](#13-beyond-dataflow-and-bigquery)
+  - [1.4. Data Lineage and Data Catalog](#14-data-lineage-and-data-catalog)
 - [2. Executing Spark on Cloud Dataproc](#2-executing-spark-on-cloud-dataproc)
   - [2.1. Hadoop ecosystem](#21-hadoop-ecosystem)
   - [2.2. Hadoop on Dataproc](#22-hadoop-on-dataproc)
@@ -9,10 +13,20 @@
     - [2.4.1. Dataproc storage](#241-dataproc-storage)
     - [2.4.2. Dataproc templates and autoscaling](#242-dataproc-templates-and-autoscaling)
     - [2.4.3. Dataproc monitoring](#243-dataproc-monitoring)
+- [3. Managed Data Pipelines](#3-managed-data-pipelines)
+  - [3.1. Building Batch data pipeline with Cloud Data Fusion](#31-building-batch-data-pipeline-with-cloud-data-fusion)
+  - [3.2. Orchestrating work with Cloud Composer (Apache Airflow)](#32-orchestrating-work-with-cloud-composer-apache-airflow)
+- [4. Cloud Dataflow](#4-cloud-dataflow)
+  - [4.1. Dataflow Pipelines](#41-dataflow-pipelines)
+    - [4.1.1. Transforming data with PTransforms](#411-transforming-data-with-ptransforms)
+    - [4.1.2. Aggregating data with GroupByKey and Combine](#412-aggregating-data-with-groupbykey-and-combine)
+    - [4.1.3. Side inputs](#413-side-inputs)
+    - [4.1.4. Windows of data](#414-windows-of-data)
+  - [4.2. Dataflow templates](#42-dataflow-templates)
 
 ## 1. Transforming data
 
-### Comparisons EL, ELT, ETL
+### 1.1. Comparisons EL, ELT, ETL
 
 Extract-Load
 
@@ -33,12 +47,12 @@ Extract-Transform-Load
 * Transform using Dataflow -> BigQuery
 * Data streaming / Continuous flow
 
-### Data quality processing
+### 1.2. Data quality processing
 
 ![](/assets/03-Building_Batch_Data_Pipelines_on_GCP_data_quality.png)
 
 
-### Beyond Dataflow and BigQuery
+### 1.3. Beyond Dataflow and BigQuery
 
 Alternatives for transformation
 
@@ -52,7 +66,7 @@ When?
 * Reuse Spark pipeline: Dataproc
 * Visual pipeline building: Data Fusion
 
-### Data Lineage and Data Catalog
+### 1.4. Data Lineage and Data Catalog
 
 Keep track of information about data --> Metadata: use tags (key:value) on datasets, tables and views
 
@@ -148,25 +162,128 @@ Set the log level according to your needs
 * Spark context
 
 
-## Managed Data Pipelines
+## 3. Managed Data Pipelines
 
-### Building Batch data pipeline with Cloud Data Fusion
+### 3.1. Building Batch data pipeline with Cloud Data Fusion
 
-### Orchestrating work with Cloud Composer (Apache Airflow)
+Full-managed, no-code tool to build data pipeline.
 
-## Cloud Dataflow
+Use Dataproc under the hood (supports for Dataflow is work in progress.):
 
-### Dataflow Pipelines
+* Create ephemeral execution environments in Cloud Dataproc (MapReduce, Spark, Spark Streaming).
+* Use existing Cloud dataproc clusters
 
-#### Designing pipeline
+Cost only when pipelines are run. Data Fusion instances don't incur  cost.
+
+Supports for metadata data lineage
+
+* Dataset
+* Columns
+
+Extensible
+
+* Plugins
+* Templates
 
 
-#### Transforming data with PTransforms
+Pipelines
 
-#### Aggregating data with GroupByKey and Combine
+* DAG
+* allow non-linear
 
-#### Side inputs and windows of data
+Explore data in Wrangler
 
-### Dataflow templates
+* apply transformations
+* create pipeline and schedule
 
-### Dataflow SQL
+### 3.2. Orchestrating work with Cloud Composer (Apache Airflow)
+
+* Serverless
+* Multiple instances are possible
+* Storage in GCS
+
+Workflows
+
+* Written in Python
+* DAG
+* Based on `Operator` (Python, GCP, AWS, Azure)
+
+Scheduling
+
+* Periodic: through code
+* Event-driven by a Cloud Function. Multiple triggers are available (GCS, HTTP, Pub/Sub, Firebase,...)
+
+Monitor
+
+* historical log for DAG runs
+* Overview per DAG and task
+
+Logs are also available in Stackdriver.
+
+## 4. Cloud Dataflow
+
+![](/assets/03-Building_Batch_Data_Pipelines_on_GCP_beam.png)
+
+* Based on Apache BEAM (= Batch + strEAM).
+* Allow for the same code to be used both for batch and stream.
+* Fully serverless
+* Prefered if no existing Spark
+* Data: pCollections of element, immutable, stored as serialized byte strings
+* Transformation: pTransform each element 
+
+![](/assets/03-Building_Batch_Data_Pipelines_on_GCP_beam2.png)
+
+### 4.1. Dataflow Pipelines
+
+* Define WHAT
+* Dataflow will decide HOW, dynamically at each step
+* Optimized graph for best execution path
+
+![](/assets/03-Building_Batch_Data_Pipelines_on_GCP_dataflow.png)
+
+* PCollection in are not transformed in place
+* Directed graph of steps
+* Can be run locally or on workers
+
+#### 4.1.1. Transforming data with PTransforms
+
+* `Map` for 1:1 relationship
+* `FlatMap` for others
+* `ParDo` implements parallel processing on each element using a `DoFn`
+
+#### 4.1.2. Aggregating data with GroupByKey and Combine
+
+`GroupByKey` usually follows a `Map` step. Careful on data skew at scale, since each group is worked on on a worker.
+
+`CoGroupByKey` similar but work on two or more key-value pairs.
+
+`Combine*` are the reduce steps, using pre-built or custom functions (can be based on `CombineFn`). Can be applied to 
+
+* a PCollection of values: `CombineGlobally`
+* a grouped Key-value pair: `CombinePerKey`
+
+`Combine` can be parallelized on multiple workers and usually is more efficient than `GroupByKey`.
+
+`Flatten` works similarly to a union of similar tables.
+
+`Partition` splits PCollections into smaller ones.
+
+#### 4.1.3. Side inputs 
+
+Side Input is a smaller dataset than can fits into memory and can be accessed for each processed elements during `ParDo`.
+
+#### 4.1.4. Windows of data
+
+Default window is a global window that starts and ends with the bounded PCollection. 
+
+![](/assets/03-Building_Batch_Data_Pipelines_on_GCP_bounded.png)
+
+For unbounded PCollection, you can use time-based windows (also possible for bounded collections).
+![](/assets/03-Building_Batch_Data_Pipelines_on_GCP_unbounded.png)
+
+### 4.2. Dataflow templates
+
+* Allows for configurable jobs to be launched by users.
+* Several templates are provided by Google, and allows for custom templates
+* Can be started programmatically
+* Template Metadata allows for template documentation
