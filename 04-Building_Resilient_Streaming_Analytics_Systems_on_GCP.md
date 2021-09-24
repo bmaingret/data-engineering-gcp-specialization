@@ -11,20 +11,58 @@
   - [5.2. BigQuery : performance considerations](#52-bigquery--performance-considerations)
 
 ## 1. Processing Streaming Data
+![](/assets/04-Building_Resilient_Streaming_Analytics_Systems_on_GCP/04-Building_Resilient_Streaming_Analytics_Systems_on_GCP_streaming_data.png)
+
+*Why stream?* Sometimes only real-time information is useful (think security, finance, health, etc.).
+
+In addition to being time constrained, streaming data is also unbounded: the data set is never complete. It also often associated with Big DAta (the 3 Vs).
+
+
 
 ## 2. Serverless Messaging with Cloud Pub/Sub
 
+** Highly available, scalable and asynchronous messaging bus**
+
+**Publish/Suscribe patterns**
+
+* Multiple publishers can post to the same topic
+* Multiple subscribers can get a post from the same subscription
+* A topic can have multiple scubscriptions
+* A subscriptions subscribes to only one topic
+
+**Push and Pull delivery**: in both an ACK is required at the subscription for each message. If ack not received before the ack deadline, message is resent. When there are multiple subscribers, only one need to acknowledge the message.
+
+![](/assets/04-Building_Resilient_Streaming_Analytics_Systems_on_GCP/04-Building_Resilient_Streaming_Analytics_Systems_on_GCP_push_pull.png)
+
+Keep in mind:
+
+* No guarantees on latency
+* Order not preserved
+* Duplication may happen
+
+Dataflow can be used to deduplicate message during a window.
+
 ## 3. Cloud Dataflow Streaming Features
 
-## 4. High-Throughput BigQuery and Bigtable Streaming Features
+**Windowing**
 
-### 4.1. Streaming into BigQuery
+* Fixed windows: time based finite chunks, non overlapping
+* Sliding windows: same but overlapping, with a minimum gap
+* Sessions windows: minimum gap, and timing dependent on another element
 
-### 4.2. Streaming into Cloud Bigtable
+**Watermark**
 
-## 5. Advanced BigQuery Functionality and Performance
+Apache beam allows the use of a watermark to account for little lag time and decide to which window allocate the data and/or to discard the data.
 
-### 5.1. BigQuery : advanced functionality
+POssible to define custom triggers based on watermarks, counts, 
+
+## 4. BigQuery Streaming Features
+
+Specific API to stream data one at a time directly into a preexisting BigQuery table. Careful: **there is a cost for streaming inserts**
 
 
-### 5.2. BigQuery : performance considerations
+
+
+### 5. Bigtable for High Throughput
+
+## 6. Advanced BigQuery Functionality and Performance
