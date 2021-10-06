@@ -1,21 +1,67 @@
 # Smart Analytics, Machine Learning, and AI on GCP
 
-- [1. Analytics and AI](#1-analytics-and-ai)
-- [2. Prebuilt ML model APIs for Unstructured Data](#2-prebuilt-ml-model-apis-for-unstructured-data)
-- [3. Big Data Analytics with Cloud AI Platform Notebooks](#3-big-data-analytics-with-cloud-ai-platform-notebooks)
-- [4. Productionizing Custom ML Models](#4-productionizing-custom-ml-models)
-- [5. Custom Model building with SQL in BigQuery ML](#5-custom-model-building-with-sql-in-bigquery-ml)
-- [6. Custom Model Building with Cloud AutoML](#6-custom-model-building-with-cloud-automl)
+- [Productionizing Custom ML Models](#productionizing-custom-ml-models)
+- [Custom Model building with SQL in BigQuery ML](#custom-model-building-with-sql-in-bigquery-ml)
+- [Custom Model Building with Cloud AutoML](#custom-model-building-with-cloud-automl)
 
-## 1. Analytics and AI
+![](/assets/05-Smart_Analytics_Machine_Learning_and_AI_on_GCP/05-Smart_Analytics_Machine_Learning_and_AI_on_GCP_ml_gcp.png)
 
+## Productionizing Custom ML Models
 
-## 2. Prebuilt ML model APIs for Unstructured Data
+![](/assets/05-Smart_Analytics_Machine_Learning_and_AI_on_GCP/05-Smart_Analytics_Machine_Learning_and_AI_on_GCP_ml_project.png)
 
-## 3. Big Data Analytics with Cloud AI Platform Notebooks
+Building custom ML:
 
-## 4. Productionizing Custom ML Models
+* Cloud AI Platform -> support training models and serving predictions (TF, Keras, XGBoost, sklearn), serverless
+* AutoML
+* BigQuery ML
+  
+**Kubeflow**: packaging ML models in deployable artefact to Kubernetes
 
-## 5. Custom Model building with SQL in BigQuery ML
+> Perception: ML is a lot about model -> reality is it requires a lot of DevOps
 
-## 6. Custom Model Building with Cloud AutoML
+* Kubeflow pipeline orchestrate ML workflows and ease sharing and reproducibility.
+* Available Python SDK to author pipelines.
+* Can be packaged 
+
+**AI Hub**
+
+> Repository for AI assets 
+
+* Kubeflow pipelines
+* Jupyter notebooks
+* Trained Models
+* VM images
+* etc.
+
+Public and **Private** assets
+
+## Custom Model building with SQL in BigQuery ML
+
+Model options:
+
+* Logistic regression
+* DNN classifier
+* XGBoost classifier
+* Linear regression
+* DNN regression
+* XGBoost regression
+* TF (for predictions only, must be trained before)
+* Recommendation engine (Matrix Factorization)
+* Clustering (kmeans)
+
+Data transformation can be included into the model 
+
+## Custom Model Building with Cloud AutoML
+
+* ML Vision (classification)
+* ML NLP (classification)
+* ML Table 
+
+Still requires ML and coding skills (different than pretrained model API).
+
+Data must be prepared and will be automatically analyzed to make sure there is enough data and organized enough.
+
+**Deploy** As soon as a model is trained, it is available to serve predictions
+
+![](/assets/05-Smart_Analytics_Machine_Learning_and_AI_on_GCP/05-Smart_Analytics_Machine_Learning_and_AI_on_GCP_matrix_choice.png)
